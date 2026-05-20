@@ -1,0 +1,14 @@
+[project]
+name = "cmaputils"
+version = "0.1.0"
+description = "Useful utilities that support CMAP's modeling team's work with Census data"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "pandas>=3.0.3",
+    "requests>=2.34.2",
+]
+
+[build-system]
+requires = ["uv_build>=0.11.15,<0.12.0"]
+build-backend = "uv_build"
