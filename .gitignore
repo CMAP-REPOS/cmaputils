@@ -9,5 +9,5 @@ wheels/
 # Virtual environments
 .venv
 
-# always ignore .env files
+# Always ignore .env files
 *.env
