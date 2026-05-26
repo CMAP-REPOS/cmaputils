@@ -19,7 +19,7 @@ import requests
 import re
 
 # - Internal dependencies
-from api_key import load_census_api_key
+from api_key import load_api_key_census
 
 # - Constants
 IL_FIPS_CODE = "17"  # Useful for defaulting to Illinois
@@ -131,4 +131,4 @@ def get_data_acs(
         )
 
     # load api key (if api_key param is None, will look in default places)
-    _api_key = load_census_api_key(key=api_key)
+    _api_key = load_api_key_census(key=api_key)
