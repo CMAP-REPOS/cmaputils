@@ -92,7 +92,11 @@ class AcsQueryException(Exception):
 
 # - Functions
 def get_data_acs(
-    table_id: str, year: int, product: str, output_dir: str = None, api_key: str = None
+    table_id: str,
+    year: int,
+    product: str,
+    output_dir: str = None,
+    api_key: str = None,
 ):
     """
     # TODO: ADD documentation

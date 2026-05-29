@@ -60,7 +60,9 @@ def _cache_census_api_key(api_key: str | None) -> str:
     return api_key
 
 
-def load_api_key_census(key: str | None = None, env_path: str | None = None) -> str:
+def load_api_key_census(
+    key: str | None = None, env_path: str | None = None
+) -> str:
     """
     Function to load a Census API Key. Can take
     either the path to a .env file containing API_KEY
@@ -97,7 +99,7 @@ def load_api_key_census(key: str | None = None, env_path: str | None = None) -> 
         if not _env_path_obj.exists():
             raise FileNotFoundError(f".env file not found at: {env_path}")
 
-        dotenv.load_dotenv(_env_path_obj)
+        dotenv.load_dotenv()
         _env_census_api_key = os.environ.get("CENSUS_API_KEY")
         _env_api_key = os.environ.get("API_KEY")
         api_key = ""  # outer scope decleration for return value
@@ -144,7 +146,9 @@ def _cache_ctpp_api_key(api_key: str | None) -> str:
     return api_key
 
 
-def load_api_key_ctpp(key: str | None = None, env_path: str | None = None) -> str:
+def load_api_key_ctpp(
+    key: str | None = None, env_path: str | Path | None = None
+) -> str:
     """
     Function to load a CTPP API Key. Can take
     either the path to a .env file containing API_KEY
@@ -155,24 +159,27 @@ def load_api_key_ctpp(key: str | None = None, env_path: str | None = None) -> st
     :param env_path: Path to a .env file. File must contain one of: CTPP_API_KEY or API_KEY
     :type env_path: str or None, optional
     """
+    print(f"env_path: {env_path}")
 
     # check whether key passed as argument, and type checking
     if (
         isinstance(key, str) and key is not None
     ):  # Q: Should I add key validation logic?
-        return _cache_census_api_key(key)
+        return _cache_ctpp_api_key(key)
 
     # check for environent variable
-    env_census_api_key = os.getenv("CTPP_API_KEY")
-    if env_census_api_key is not None:
-        return _cache_census_api_key(env_census_api_key)
+    env_ctpp_api_key = os.getenv("CTPP_API_KEY")
+    if env_ctpp_api_key is not None:
+        return _cache_ctpp_api_key(env_ctpp_api_key)
 
     env_api_key = os.getenv("API_KEY")
     if env_api_key is not None:
-        return _cache_census_api_key(env_api_key)
+        return _cache_ctpp_api_key(env_api_key)
 
     # check for key in provided .env file
-    if isinstance(env_path, str) and key is not None:
+    if (
+        isinstance(env_path, str) or isinstance(env_path, Path)
+    ) and env_path is not None:
         # expanduser allows for ~ as home
         _env_path_obj = Path(env_path).expanduser()
         if not _env_path_obj.exists():
@@ -186,14 +193,14 @@ def load_api_key_ctpp(key: str | None = None, env_path: str | None = None) -> st
         # CTPP_API_KEY var prioritized, then API_KEY
         # throws if both ^^ are None or non 24 char alphanumeric
         try:
-            api_key = _cache_census_api_key(_env_census_api_key)
+            api_key = _cache_ctpp_api_key(_env_census_api_key)
         except ApiKeyException:
-            api_key = _cache_census_api_key(_env_api_key)
+            api_key = _cache_ctpp_api_key(_env_api_key)
 
         return api_key
 
     raise ApiKeyException(
-        "Could not find a valid Census API key! Please provide set API_KEY or"
+        "Could not find a valid CTPP API key! Please provide set API_KEY or"
         " CTPP_API_KEY variable in your environment or in a .env file"
         " (must provide path as argument to this function)"
     )

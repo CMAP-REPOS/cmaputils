@@ -5,6 +5,7 @@ description = "Useful utilities that support CMAP's modeling team's work with Ce
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
+    "aiohttp>=3.13.5",
     "pandas>=3.0.3",
     "python-dotenv>=1.2.2",
     "requests>=2.34.2",
@@ -16,4 +17,11 @@ build-backend = "uv_build"
 
 [tool.ruff]
 lint.ignore = ["E402"]
+line-length = 80
+
+[dependency-groups]
+dev = [
+    "pytest>=9.0.3",
+    "sphinx>=9.1.0",
+]
 

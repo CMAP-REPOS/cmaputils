@@ -1,0 +1,31 @@
+{
+  "size": 4,
+  "page": 1,
+  "total": 4,
+  "data": [
+    {
+      "year": 2000,
+      "title": "2000 Data",
+      "description": "2000 dataset",
+      "source": "U.S. Census Bureau, American Community Survey 2006-2010 Five-year estimates. Special Tabulation: Census Transportation Planning"
+    },
+    {
+      "year": 2010,
+      "title": "2006-2010 (5-year)",
+      "description": "2010 dataset",
+      "source": "U.S. Census Bureau, 2006-2010 American Community Survey 5-Year Estimates, Special Tabulation: Census Transportation Planning Products Program"
+    },
+    {
+      "year": 2016,
+      "title": "2012-2016 (5-year)",
+      "description": "2016 dataset",
+      "source": "U.S. Census Bureau, American Community Survey 2012-2016 Five-year estimates. Special Tabulation: Census Transportation Planning"
+    },
+    {
+      "year": 2021,
+      "title": "2017-2021 (5-year)",
+      "description": "2021 dataset",
+      "source": "U.S. Census Bureau, American Community Survey 2017-2021 Five-year estimates. Special Tabulation: Census Transportation Planning"
+    }
+  ]
+}

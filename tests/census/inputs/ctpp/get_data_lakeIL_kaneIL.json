@@ -1,0 +1,14 @@
+{
+  "size": 1,
+  "page": 1,
+  "total": 1,
+  "data": [
+    {
+      "geoid": "C0300US17097",
+      "a101101_e1": "702,890",
+      "a101101_e2": "157,050",
+      "name": "Lake County, Illinois"
+    }
+  ],
+  "shpdata": null
+}

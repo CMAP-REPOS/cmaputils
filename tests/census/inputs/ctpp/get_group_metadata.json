@@ -1,0 +1,22 @@
+{
+  "name": "B117200",
+  "description": "Household Limited English Speaking Status (3) by Language Spoken at Home (14)",
+  "universe": "Population 5 years and over in households",
+  "unit": "Population 5 and Over in Households",
+  "notes": "All",
+  "content": "Household Limited English Speaking Status (3) by Language Spoken at Home (14)",
+  "total": "42",
+  "category": "RES",
+  "estformat": "0",
+  "summaryLevels": [
+    "C01",
+    "C02",
+    "C03",
+    "C04",
+    "C05",
+    "C07",
+    "C08",
+    "C09",
+    "C11"
+  ]
+}

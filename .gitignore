@@ -11,3 +11,5 @@ wheels/
 
 # Always ignore .env files
 *.env
+# Except for whitelisted ones!
+!tests/census/sample.env
