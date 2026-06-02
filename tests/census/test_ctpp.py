@@ -91,8 +91,8 @@ def test_ctpp_get_data_cookIL_lakeIN():
     test_result = GENERIC_TEST_CLIENT.get_data(
         year=2021,
         get="B117200",
-        origin=CTPPGeography.county(county_fips="031", state_fips="17"),
-        destination=CTPPGeography.county(county_fips="089", state_fips="18"),
+        origin=CTPPGeography.county(county="031", state="17"),
+        destination=CTPPGeography.county(county="089", state="18"),
     )
     assert test_result == known_good_data
 
@@ -104,8 +104,8 @@ def test_ctpp_get_data_lakeIL_kaneIL():
     test_result = GENERIC_TEST_CLIENT.get_data(
         year=2016,
         get=["a101101_e1", "a101101_e2"],
-        origin=CTPPGeography.county(county_fips="097", state_fips="17"),
-        destination=CTPPGeography.county(county_fips="089", state_fips="17"),
+        origin=CTPPGeography.county(county="097", state="17"),
+        destination=CTPPGeography.county(county="089", state="17"),
     )
     assert test_result == known_good_data
 
@@ -117,13 +117,10 @@ def test_ctpp_get_data_cookILTract1001_cookILTract1002():
     test_result = GENERIC_TEST_CLIENT.get_data(
         year=2021,
         get=["B303100_e1"],
-        origin=CTPPGeography.tract(
-            tract_fips="", county_fips="031", state_fips="17"
-        ),
-        destination=CTPPGeography.tract(
-            tract_fips="*", county_fips="031", state_fips="17"
-        ),
+        origin=CTPPGeography.tract(tract="*", county="031", state="17"),
+        destination=CTPPGeography.tract(tract="*", county="097", state="17"),
     )
+    print(test_result)
     assert test_result == known_good_data
 
 
@@ -137,9 +134,22 @@ def test_ctpp_get_data_cmap_counties():
         origin=CTPPGeography.cmap_counties(),
         destination=CTPPGeography.cmap_counties(),
     )
-    print(test_result)
+    assert test_result == known_good_data
+
+
+def test_ctpp_get_data_geojson():
+    known_good_data = {}
+    # with open(os.path.join(INPUTS_DIR, "# TODO: GET known good data")) as file:
+    # known_good_data = json.load(file)
+    test_result = GENERIC_TEST_CLIENT.get_data(
+        year=2021,
+        get=["B303100_e1"],
+        origin=CTPPGeography.cmap_counties(),
+        destination=CTPPGeography.cmap_counties(),
+        response_format="geojson",
+    )
     assert test_result == known_good_data
 
 
 if __name__ == "__main__":
-    test_ctpp_get_data_cookIL_lakeIN()
+    test_ctpp_get_data_cookILTract1001_cookILTract1002()

@@ -83,6 +83,7 @@ class CTPPYear(IntEnum):
 
 
 class SummaryLevel(StrEnum):
+    # TODO: fix mapping for mcd, puma, msa, msa princ cities, tad, taz
     NATION = "nation"
     STATE = "state"
     COUNTY = "county"
@@ -91,7 +92,7 @@ class SummaryLevel(StrEnum):
     PUMA = "State-PUMA5"
     MSA = "MSA"
     MSA_Principal_Cities = "MSA-Principal-Cities"
-    TRACT = "State-County-Tract"
+    TRACT = "tract"
     TAD = "TAD"
     TAZ = "TAZ"
 
@@ -149,74 +150,76 @@ class CTPPGeography:
     -----
     >>> CTPPGeography.state(fips="17") # get Illinois CTPPGeography object
 
-    >>> CTPPGeography.county(state_fips="17", county_fips="031") # get Cook County CTPPGeography object
+    >>> CTPPGeography.county(state="17", county="031") # get Cook County CTPPGeography object
 
     Methods
     -----
     state(fips)
         Get state CTPPGeography object
 
-    county(state_fips, county_fips)
+    county(state, county)
         Get state CTPPGeography object
 
-    tract(state_fips, county_fips, tract_fips)
+    tract(tract, county, state)
         Get state CTPPGeography object
     """
 
     level: SummaryLevel = field(default=SummaryLevel.COUNTY)
     fips: str | int | list[int] = field(default="*")
     within: dict[SummaryLevel, str | int | list[int]] = field(
-        default_factory={SummaryLevel.STATE: "017"}
+        default_factory={SummaryLevel.STATE: "17"}
     )
 
     @classmethod
     def state(cls, fips: str | list[str]) -> CTPPGeography:
         # TODO: ADD documentation
-        return CTPPGeography(level=SummaryLevel.STATE, fips=_format_fips(field))
+        return CTPPGeography(level=SummaryLevel.STATE, fips=_format_fips(fips))
 
     @classmethod
     def county(
         cls,
+        county: str | list[str] = "*",
         *,
-        state_fips: str | list[str],
-        county_fips: str | list[str] = "*",
+        state: str | list[str],
     ) -> CTPPGeography:
         # TODO: ADD Documentation
         return CTPPGeography(
             level=SummaryLevel.COUNTY,
-            fips=_format_fips(county_fips),
-            within={SummaryLevel.STATE: _format_fips(state_fips)},
+            fips=_format_fips(county),
+            within={SummaryLevel.STATE: _format_fips(state)},
         )
 
     @classmethod
     def tract(
         cls,
-        tract_fips: str | list[str] = "*",
+        tract: str | list[str] = "*",
         *,
-        state_fips: str | list[str],
-        county_fips: str | list[str],
+        county: str | list[str] = "*",
+        state: str | list[str],
     ):
         # TODO: ADD documentation
         return CTPPGeography(
-            level=SummaryLevel.COUNTY,
-            fips=_format_fips(county_fips),
+            level=SummaryLevel.TRACT,
+            fips=_format_fips(tract),
             within={
-                SummaryLevel.STATE: _format_fips(state_fips),
-                SummaryLevel.COUNTY: _format_fips(county_fips),
+                SummaryLevel.STATE: _format_fips(state),
+                SummaryLevel.COUNTY: _format_fips(county),
             },
         )
 
+    @classmethod
     def taz(args):
         pass
 
+    @classmethod
     def place(
-        cls, place_fips: str | list[str], state_fips: str | list[str]
+        cls, place_fips: str | list[str], state: str | list[str]
     ) -> CTPPGeography:
         # TODO: ADD documentation
         return CTPPGeography(
             level=SummaryLevel.PLACE,
             fips=_format_fips(place_fips),
-            within={SummaryLevel.STATE: _format_fips(state_fips)},
+            within={SummaryLevel.STATE: _format_fips(state)},
         )
 
     def cmap_counties():

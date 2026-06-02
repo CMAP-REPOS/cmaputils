@@ -3,21 +3,28 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
+=======================
 cmaputils documentation
 =======================
 
-Add your content using ``reStructuredText`` syntax. See the
-`reStructuredText <https://www.sphinx-doc.org/en/master/usage/restructuredtext/index.html>`_
-documentation for details.
-
-
 .. toctree::
-   :maxdepth: 2
-   :caption: Contents:
+   
+   installation
+   documentation
+   quickstart
+   usage
+   examples
+   modules
+   future-plans
+   contributing
 
-    usage/installation
-    usage/quickstart
-    usage/census/ctpp
-    usage/census/acs
-    usage/census/api_key
+
+.. include:: ../../README.rst
+
+Indices and tables
+==================
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`
 
