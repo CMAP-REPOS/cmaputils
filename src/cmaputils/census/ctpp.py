@@ -254,9 +254,16 @@ class CTPPClient:
     -----
     list_datasets(size=None, page=None)
 
-    # TODO: ADD documentation
+    get_dataset_metadata()
+
+    list_groups_in_dataset()
+
+    get_group_metadata()
+
+    get_data()
     """
 
+    # TODO: ADD documentation
     def __init__(self, api_key: str | None = None, env_path: str | None = None):
         self.api_key = api_key
         self.env_path = env_path
