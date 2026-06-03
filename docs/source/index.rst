@@ -7,6 +7,15 @@
 cmaputils documentation
 =======================
 
+.. include:: ../../README.rst
+
+
+Table of Contents
+=================
+
+See below for table of contents for the documentation, including documentation for
+``cmaputils`` components such as methods, functions, classes, and modules.
+
 .. toctree::
    
    installation
@@ -17,10 +26,6 @@ cmaputils documentation
    modules
    future-plans
    contributing
-
-
-.. include:: ../../README.rst
-
 
 Indices and tables
 ==================
