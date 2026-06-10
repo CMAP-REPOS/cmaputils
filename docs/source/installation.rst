@@ -60,7 +60,7 @@ Now, from inside the ``cmaputils`` directory, activate your chosen Python enviro
 
 .. code:: powershell
 
-    $ PATH\TO\YOUR\VENV\Scripts\activate.bat
+    $ PATH\TO\YOUR\VENV\Scripts\activate.ps1
 
 If you are using uv:
 

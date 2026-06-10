@@ -159,7 +159,6 @@ def load_api_key_ctpp(
     :param env_path: Path to a .env file. File must contain one of: CTPP_API_KEY or API_KEY
     :type env_path: str or None, optional
     """
-    print(f"env_path: {env_path}")
 
     # check whether key passed as argument, and type checking
     if (
