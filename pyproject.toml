@@ -3,7 +3,7 @@ name = "cmaputils"
 version = "0.1.2"
 description = "Useful utilities that support CMAP's modeling team's work with Census data"
 readme = "README.rst"
-requires-python = ">=3.13"
+requires-python = ">=3.11.6"
 dependencies = [
     "aiohttp>=3.13.5",
     "pandas>=3.0.3",
@@ -22,11 +22,11 @@ line-length = 80
 [dependency-groups]
 dev = [
     "pytest>=9.0.3",
-    "sphinx>=9.1.0",
+    "sphinx>=9.0.0",
 ]
 docs = [
     "furo>=2025.12.19",
     "myst-parser>=5.1.0",
-    "sphinx>=9.1.0",
+    "sphinx>=9.0.4",
 ]
 
