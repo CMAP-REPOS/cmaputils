@@ -1,0 +1,26 @@
+repos:
+  # run custom commit-time macros
+  - repo: local
+    hooks:
+      - id: cmaputils-macros
+        name: cmaputils Commit-time Macros
+        entry: uv run python macros/run_macros.py
+        language: system
+        pass_filenames: false
+        always_run: false
+        stages: [manual]
+
+  # sync requirements.txt with uv
+  - repo: https://github.com/astral-sh/uv-pre-commit
+    rev: 0.11.15
+    hooks:
+      - id: pip-compile
+        args: [pyproject.toml -o, requirements.txt]
+
+  # run formatting with ruff
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.15.17
+    hooks:
+      # formatting
+      - id: ruff-format
+

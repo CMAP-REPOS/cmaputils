@@ -13,3 +13,7 @@ wheels/
 *.env
 # Except for whitelisted ones!
 !tests/census/sample.env
+
+# Especially making sure "contributors/api_keys.env" gets ignored
+contributors/api_keys.env
+

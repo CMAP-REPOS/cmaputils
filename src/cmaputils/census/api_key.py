@@ -10,28 +10,28 @@ Input Files: N/A
 Output Files: N/A
 """
 
-# - External dependencies
+# SECTION: External dependencies
 import os
 import logging
 from pathlib import Path
 import re
 import dotenv
 
-# - Internal dependencies
+# SECTION: Internal dependencies
 
-# - Constants
+# SECTION: Constants
 
 
-# - Exceptions
+# SECTION: Exceptions
 class ApiKeyException(Exception):
     """Exception raised in case of API key problems"""
 
     pass
 
 
-# - Classes
+# SECTION: Classes
 
-# - Functions
+# SECTION: Functions
 
 
 def _cache_census_api_key(api_key: str | None) -> str:
@@ -93,13 +93,15 @@ def load_api_key_census(
         return _cache_census_api_key(env_api_key)
 
     # check for key in provided .env file
-    if isinstance(env_path, str) and key is not None:
+    if (
+        isinstance(env_path, str) or isinstance(env_path, Path)
+    ) and env_path is not None:
         # expanduser allows for ~ as home
         _env_path_obj = Path(env_path).expanduser()
         if not _env_path_obj.exists():
             raise FileNotFoundError(f".env file not found at: {env_path}")
 
-        dotenv.load_dotenv()
+        dotenv.load_dotenv(_env_path_obj)
         _env_census_api_key = os.environ.get("CENSUS_API_KEY")
         _env_api_key = os.environ.get("API_KEY")
         api_key = ""  # outer scope decleration for return value
