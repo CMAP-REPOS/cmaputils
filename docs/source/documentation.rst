@@ -17,37 +17,37 @@ more.
 For advanced users, if you would like to use ``sphinx`` to view the documentation (recommended for links to function
 properly), do the following: 
 
-0. If you do not already have ``sphinx`` installed to your Python environment, activate the Python environment of your
+1. If you do not already have ``sphinx`` installed to your Python environment, activate the Python environment of your
 choosing, and then run:
 
-    .. code:: Shell
+.. code:: shell
 
     $ pip install sphinx furo
 
-1. Go to the ``cmaputils`` directory:
+2. Go to the ``cmaputils`` directory:
 
-    .. code:: Shell
+.. code:: shell
 
-    $ cd PATH\\TO\\cmaputils
+    $ cd PATH\TO\cmaputils
     
-2. Build the Sphinx docs:
+3. Build the Sphinx docs:
 
-    .. code:: Shell
-
-    # (If you are on Windows, replace forward slashes '/' with back slashes '\')
-
-    $ sphinx-build -b html ./docs/source ./docs/build 
-
-3. Serve the docs locally:
-
-    .. code:: Shell
+.. code:: shell
 
     # (If you are on Windows, replace forward slashes '/' with back slashes '\')
 
-    $ python -m http.server 8000 --directory ./docs/build
+    $ sphinx-build -b html docs/source docs/build 
 
-4. View the docs in your browser:
-    Open your browser and type in 'localhost:8000' in the URL bar
+4. Serve the docs locally:
+
+.. code:: shell
+
+    # (If you are on Windows, replace forward slashes '/' with back slashes '\')
+
+    $ python -m http.server 8000 --directory docs/build
+
+5. View the docs in your browser:
+Open your browser and type in 'localhost:8000' in the URL bar
 
 *NOTE: because this package is still early in development, some of the documentation may not be fully
 complete. If you encounter any problems with documentation, or have any questions, contact 
