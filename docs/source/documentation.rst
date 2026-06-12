@@ -5,8 +5,7 @@ Documentation
 =================
 
 The best way to view the documentation for this project is to look in the ``docs`` directory on the project's GitHub page
-or follow the links in the README. For advanced users, if you feel comfortable
-using ``sphinx``, you can use ``uv run sphinx-build source build`` in the docs directory.
+or follow the links in the README.
 
 For technical details, you can find more documentation for the various classes, functions,
 modules, classes, etc. in :ref:`the usage guide <usage-guide>`. You can also find more 
@@ -14,6 +13,41 @@ detailed usage documentation (parameters, etc.) in the docstrings for classes, f
 and functions. You can find these by installing ``cmaputils`` to your Python environment, and
 hovering over the names of classes, etc. in just about every editor, including VSCode, PyCharm, and
 more.
+
+For advanced users, if you would like to use ``sphinx`` to view the documentation (recommended for links to function
+properly), do the following: 
+
+0. If you do not already have ``sphinx`` installed to your Python environment, activate the Python environment of your
+choosing, and then run:
+
+    .. code:: Shell
+
+    $ pip install sphinx furo
+
+1. Go to the ``cmaputils`` directory:
+
+    .. code:: Shell
+
+    $ cd PATH\\TO\\cmaputils
+    
+2. Build the Sphinx docs:
+
+    .. code:: Shell
+
+    # (If you are on Windows, replace forward slashes '/' with back slashes '\')
+
+    $ sphinx-build -b html ./docs/source ./docs/build 
+
+3. Serve the docs locally:
+
+    .. code:: Shell
+
+    # (If you are on Windows, replace forward slashes '/' with back slashes '\')
+
+    $ python -m http.server 8000 --directory ./docs/build
+
+4. View the docs in your browser:
+    Open your browser and type in 'localhost:8000' in the URL bar
 
 *NOTE: because this package is still early in development, some of the documentation may not be fully
 complete. If you encounter any problems with documentation, or have any questions, contact 
