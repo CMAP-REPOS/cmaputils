@@ -26,12 +26,12 @@ import re
 from cmaputils.census.api_key import load_api_key_ctpp, ApiKeyException
 
 # SECTION: Constants
-CTPP_BASE_URL = "https://ctppdata.transportation.org/api"
-DATASET_ENDPOINT = f"{CTPP_BASE_URL}/datasets"
-GROUP_ENDPOINT = f"{CTPP_BASE_URL}/groups"
-DATA_ENDPOINT = f"{CTPP_BASE_URL}/data"
+_CTPP_BASE_URL = "https://ctppdata.transportation.org/api"
+_DATASET_ENDPOINT = f"{_CTPP_BASE_URL}/datasets"
+_GROUP_ENDPOINT = f"{_CTPP_BASE_URL}/groups"
+_DATA_ENDPOINT = f"{_CTPP_BASE_URL}/data"
 
-CTPP_SUMMARY_LEVELS = [
+_CTPP_SUMMARY_LEVELS = [
     "Nation",
     "State",
     "State-County",
@@ -44,41 +44,52 @@ CTPP_SUMMARY_LEVELS = [
     "TAD",
     "TAZ",
 ]
-CTPP_AVAILABLE_YEARS = [2000, 2010, 2016, 2021]
-CTPP_RESPONSE_FORMATS = ["array", "list", "geojson"]
+_CTPP_AVAILABLE_YEARS = [2000, 2010, 2016, 2021]
+_CTPP_RESPONSE_FORMATS = ["array", "list", "geojson"]
 
-LONGITUDE_REGEX = re.compile(
+_LONGITUDE_REGEX = re.compile(
     r"^[-+]?(180(\.0+)?|1[0-7]\d(\.\d+)?|\d{1,2}(\.\d+)?)$"
 )
-LATITUDE_REGEX = re.compile(r"^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?)$")
+_LATITUDE_REGEX = re.compile(r"^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?)$")
 
 # -- Useful fipscodes
-CMAP_COUNTY_CODES = ["031", "089", "043", "097", "093", "111", "197"]
+_CMAP_COUNTY_CODES = ["031", "089", "043", "097", "093", "111", "197"]
 
 
 # SECTION: Classes
 
 
 # -- Enums
-class CTPPYear(IntEnum):
+class _CTPPYear(IntEnum):
+    """
+    Helper function: enum that just makes it easier to check whether year
+    is valid in query or not
+
+    :meta private:
+    """
+
     Y2000 = 2000
     Y2010 = 2010
     Y2016 = 2016
     Y2021 = 2021
 
     @classmethod
-    def _ctpp_year_from_value(cls, year: int | str | CTPPYear) -> CTPPYear:
-        """Helper Function:"""
-        if isinstance(year, CTPPYear):
+    def _ctpp_year_from_value(cls, year: int | str | _CTPPYear) -> _CTPPYear:
+        """
+        Helper Function: gives proper errors for improper years for CTPP
+
+        :meta private:
+        """
+        if isinstance(year, _CTPPYear):
             return year
-        elif isinstance(year, int) and year in CTPP_AVAILABLE_YEARS:
-            return CTPPYear(year)
-        elif isinstance(year, str) and int(year) in CTPP_AVAILABLE_YEARS:
-            return CTPPYear(int(year))
+        elif isinstance(year, int) and year in _CTPP_AVAILABLE_YEARS:
+            return _CTPPYear(year)
+        elif isinstance(year, str) and int(year) in _CTPP_AVAILABLE_YEARS:
+            return _CTPPYear(int(year))
         else:
             raise ValueError(
                 "Provided year must be an int, string, or CTPPYear instance"
-                f" and must be one of: {CTPP_AVAILABLE_YEARS}"
+                f" and must be one of: {_CTPP_AVAILABLE_YEARS}"
             )
 
 
@@ -152,16 +163,6 @@ class CTPPGeography:
 
     >>> CTPPGeography.county(state="17", county="031") # get Cook County CTPPGeography object
 
-    Methods
-    -----
-    state(fips)
-        Get state CTPPGeography object
-
-    county(state, county)
-        Get state CTPPGeography object
-
-    tract(tract, county, state)
-        Get state CTPPGeography object
     """
 
     level: SummaryLevel = field(default=SummaryLevel.COUNTY)
@@ -213,22 +214,22 @@ class CTPPGeography:
 
     @classmethod
     def place(
-        cls, place_fips: str | list[str], state: str | list[str]
+        cls, place: str | list[str], state: str | list[str]
     ) -> CTPPGeography:
         # TODO: ADD documentation
         return CTPPGeography(
             level=SummaryLevel.PLACE,
-            fips=_format_fips(place_fips),
+            fips=_format_fips(place),
             within={SummaryLevel.STATE: _format_fips(state)},
         )
 
     def cmap_counties():
         """
-        Get county-level flows for the 7 county CMAP area.
+        Creates a `CTPPGeography` object for the 7 CMAP counties
         """
         return CTPPGeography(
             level=SummaryLevel.COUNTY,
-            fips=_format_fips(CMAP_COUNTY_CODES),
+            fips=_format_fips(_CMAP_COUNTY_CODES),
             within={SummaryLevel.STATE: _format_fips("17")},
         )
 
@@ -248,19 +249,6 @@ class CTPPClient:
         A path to a .env file, if would like to explicitly construct
         CTPPClient with a given API key contained therein.
         .env file must contain either `API_KEY` or `CTPP_API_KEY`
-
-
-    Methods
-    -----
-    list_datasets(size=None, page=None)
-
-    get_dataset_metadata()
-
-    list_groups_in_dataset()
-
-    get_group_metadata()
-
-    get_data()
     """
 
     # TODO: ADD documentation
@@ -294,11 +282,13 @@ class CTPPClient:
         self._ctpp_api_key = _api_key
 
     def _query(
-        self, ctpp_url: str = CTPP_BASE_URL, params: dict | None = None
+        self, ctpp_url: str = _CTPP_BASE_URL, params: dict | None = None
     ) -> dict:
         """
         Helper function: the function that actually queries
         the CTPP API. Thin wrapper around Session.get(...).
+
+        :meta private:
         """
         _query_response = ""
         _clean_params = _sanitize_params(params)
@@ -344,7 +334,7 @@ class CTPPClient:
             if params is not None
             else _list_datasets_param_builder(size, page)
         )
-        _query_result = self._query(DATASET_ENDPOINT, params=_query_params)
+        _query_result = self._query(_DATASET_ENDPOINT, params=_query_params)
 
         _write_json_response(_query_result, output_path)
         return _query_result
@@ -356,7 +346,7 @@ class CTPPClient:
 
         _query_params = _dataset_metadata_param_builder(year)
         _query_result = self._query(
-            ctpp_url=f"{DATASET_ENDPOINT}/{year}", params=_query_params
+            ctpp_url=f"{_DATASET_ENDPOINT}/{year}", params=_query_params
         )
 
         _write_json_response(_query_result, output_path)
@@ -394,13 +384,13 @@ class CTPPClient:
 
         _query_year = _query_params.get("year")
         # FIX: shouldn't have to cast to int, fix _sanitize_params/builder functions
-        if int(_query_year) not in CTPP_AVAILABLE_YEARS:
+        if int(_query_year) not in _CTPP_AVAILABLE_YEARS:
             raise ValueError(
                 "Must provide a valid year for this query."
-                f" Year must be one of: {CTPP_AVAILABLE_YEARS}"
+                f" Year must be one of: {_CTPP_AVAILABLE_YEARS}"
             )
 
-        _endpoint = f"{DATASET_ENDPOINT}/{_query_year}/groups"
+        _endpoint = f"{_DATASET_ENDPOINT}/{_query_year}/groups"
         _query_result = self._query(ctpp_url=_endpoint, params=_query_params)
 
         _write_json_response(_query_result, output_path)
@@ -431,15 +421,15 @@ class CTPPClient:
         _query_year = _query_params.get("year")
         _query_id = _query_params.get("id")
 
-        if int(_query_year) not in CTPP_AVAILABLE_YEARS:
+        if int(_query_year) not in _CTPP_AVAILABLE_YEARS:
             raise ValueError(
                 "Must provide a valid year for this query."
-                f" Year must be one of: {CTPP_AVAILABLE_YEARS}"
+                f" Year must be one of: {_CTPP_AVAILABLE_YEARS}"
             )
 
         # TODO: add _query_id checks
 
-        _endpoint = f"{DATASET_ENDPOINT}/{_query_year}/groups/{_query_id}"
+        _endpoint = f"{_DATASET_ENDPOINT}/{_query_year}/groups/{_query_id}"
         _query_result = self._query(ctpp_url=_endpoint, params=_query_params)
 
         _write_json_response(_query_result, output_path)
@@ -501,10 +491,10 @@ class CTPPClient:
         """
 
         # error handling stuff
-        if year not in CTPP_AVAILABLE_YEARS:
+        if year not in _CTPP_AVAILABLE_YEARS:
             raise ValueError(
                 f" Invalid Year:'year' paramater for this "
-                f"query must be one of: {CTPP_AVAILABLE_YEARS}"
+                f"query must be one of: {_CTPP_AVAILABLE_YEARS}"
             )
 
         # TODO: table checking logic?
@@ -553,23 +543,23 @@ class CTPPClient:
 
             # quick check for validity
             for _lat in [_coords[0], _coords[2]]:
-                if not LATITUDE_REGEX.match(_lat):
+                if not _LATITUDE_REGEX.match(_lat):
                     raise ValueError(
                         f"Invalid bbox: '{_lat}' is not a valid latitude"
                     )
             for _lon in [_coords[1], _coords[3]]:
-                if not LONGITUDE_REGEX.match(_lon):
+                if not _LONGITUDE_REGEX.match(_lon):
                     raise ValueError(
                         f"Invalid bbox: '{_lat}' is not a valid longitude"
                     )
 
         if (
             response_format is not None
-            and response_format not in CTPP_RESPONSE_FORMATS
+            and response_format not in _CTPP_RESPONSE_FORMATS
         ):
             raise ValueError(
                 "Invalid response_format: response_format must be one of:"
-                f" {CTPP_RESPONSE_FORMATS}"
+                f" {_CTPP_RESPONSE_FORMATS}"
             )
 
         # formatting params list of tuples for query
@@ -614,7 +604,7 @@ class CTPPClient:
 
         # TODO: finish rest of arguments!
 
-        url = f"{DATA_ENDPOINT}/{year}"
+        url = f"{_DATA_ENDPOINT}/{year}"
 
         response = self.session.get(url, params=query_params)
         response.raise_for_status()
@@ -696,6 +686,8 @@ class CTPPClient:
         :return: A DataFrame containing the table requested in the query
         :rtype: pd.DataFrame
         FINISH!!
+
+        :meta private:
         """
         # TODO: FINISH DOCUMENTATION
 
@@ -721,6 +713,8 @@ def _sanitize_params(params: dict | None) -> dict | None:
     """
     Helper function: cleans up params dictionary, removing any None key-value
     pairs and returning None if no params
+
+    :meta private:
     """
     _params = {
         key: value
@@ -733,7 +727,11 @@ def _sanitize_params(params: dict | None) -> dict | None:
 def _list_datasets_param_builder(
     size: int | None = None, page: int | None = None
 ) -> dict:
-    """Helper function: builds params dictionary for the /datasets endpoint."""
+    """
+    Helper function: builds params dictionary for the /datasets endpoint.
+
+    :meta private:
+    """
 
     # must provide both size and page, OR neither
     if (size is None or page is None) and (
@@ -747,13 +745,13 @@ def _list_datasets_param_builder(
     # page and size must be between 0 and 4 as there are only 4 products
     if size is not None and (size <= 0 or size > 4):
         raise ValueError(
-            f"'size' parameter for {CTPP_BASE_URL}/datasets endpoint must be"
+            f"'size' parameter for {_CTPP_BASE_URL}/datasets endpoint must be"
             " greater than 0 and less than or equal to four"
         )
 
     if page is not None and (page <= 0 or page > 4):
         raise ValueError(
-            f"'page' parameter for {CTPP_BASE_URL}/datasets must be greater "
+            f"'page' parameter for {_CTPP_BASE_URL}/datasets must be greater "
             "than 0 and less than or equal to four"
         )
 
@@ -765,12 +763,14 @@ def _dataset_metadata_param_builder(year: int | None = None) -> dict | None:
     """
     Helper function: builds params dictionary for
     the /datasets/{year} endpoint. None if no params
+
+    :meta private:
     """
     # year must be one of the acceptable products
-    if year not in CTPP_AVAILABLE_YEARS and year is not None:
+    if year not in _CTPP_AVAILABLE_YEARS and year is not None:
         raise ValueError(
-            f"'year' paramater for {CTPP_BASE_URL}/datasets/{{year}} "
-            f"must be one of: {CTPP_AVAILABLE_YEARS}"
+            f"'year' paramater for {_CTPP_BASE_URL}/datasets/{{year}} "
+            f"must be one of: {_CTPP_AVAILABLE_YEARS}"
         )
 
     _params = {"year": f"{year}"}
@@ -786,26 +786,28 @@ def _list_groups_param_builder(
     """
     Helper function: builds params dictionary for the
     /datasets/{year}/groups endpoint.
+
+    :meta private:
     """
     # check year (year cannot be None for this query)
-    if year not in CTPP_AVAILABLE_YEARS:
+    if year not in _CTPP_AVAILABLE_YEARS:
         raise ValueError(
             f"'year' parameter is required for "
-            f"{CTPP_BASE_URL}/datasets/{{year}}/groups and "
-            f"must be one of: {CTPP_AVAILABLE_YEARS}"
+            f"{_CTPP_BASE_URL}/datasets/{{year}}/groups and "
+            f"must be one of: {_CTPP_AVAILABLE_YEARS}"
         )
 
     # check size
     if size is not None and (size <= 0 and size is not None):
         raise ValueError(
-            f"'size' parameter for {CTPP_BASE_URL}/datasets endpoint must be"
+            f"'size' parameter for {_CTPP_BASE_URL}/datasets endpoint must be"
             " greater than 0"
         )
 
     # check page param
     if page is not None and (page <= 0 or page > 4 and page is not None):
         raise ValueError(
-            f"'page' parameter for {CTPP_BASE_URL}/datasets must be greater than 0"
+            f"'page' parameter for {_CTPP_BASE_URL}/datasets must be greater than 0"
         )
 
     _params = {
@@ -823,20 +825,22 @@ def _group_metadata_param_builder(
     """
     Helper function: builds params for the
     /datasets/{year}/groups/{id} endpoint.
+
+    :meta private:
     """
     # check year (year cannot be None for this query)
-    if year not in CTPP_AVAILABLE_YEARS:
+    if year not in _CTPP_AVAILABLE_YEARS:
         raise ValueError(
             f"'year' parameter is required for "
-            f"{CTPP_BASE_URL}/datasets/{{year}}/groups and "
-            f"must be one of: {CTPP_AVAILABLE_YEARS}"
+            f"{_CTPP_BASE_URL}/datasets/{{year}}/groups and "
+            f"must be one of: {_CTPP_AVAILABLE_YEARS}"
         )
 
     # TODO: check group id?
     if id is None:
         raise ValueError(
             "'id' parameter is required for "
-            f"{CTPP_BASE_URL}/datasets/{{year}}/groups/{{id}}"
+            f"{_CTPP_BASE_URL}/datasets/{{year}}/groups/{{id}}"
         )
 
     _params = {"year": f"{year}", "id": f"{id}"}
@@ -847,7 +851,11 @@ def _group_metadata_param_builder(
 
 
 def _format_fips(fips: str | list[str]) -> str:
-    """Helper function: formats inputted fips for query"""
+    """
+    Helper function: formats inputted fips for query
+
+    :meta private:
+    """
     if isinstance(fips, str):
         return fips
     elif isinstance(fips, list) and all(
@@ -864,6 +872,8 @@ def _ctppgeography_to_params(
     """
     Helper function: turns CTPPGeography object into params dict.
     `origin_or_destination` must be either 'origin' or 'destination'
+
+    :meta private:
     """
     _for_key = ""
     _in_key = ""
@@ -895,7 +905,11 @@ def _ctppgeography_to_params(
 def _write_json_response(
     json_response: dict, output_path: str | Path | None = None
 ):
-    """Helper function: writes to output_path if not None"""
+    """
+    Helper function: writes to output_path if not None
+
+    :meta private:
+    """
     if isinstance(output_path, str) or isinstance(output_path, Path):
         with open(output_path, "w") as file:
             json.dump(json_response, file)

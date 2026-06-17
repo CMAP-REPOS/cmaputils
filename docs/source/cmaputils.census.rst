@@ -10,13 +10,14 @@ cmaputils.census.acs module
 .. automodule:: cmaputils.census.acs
    :members:
    :show-inheritance:
+   :exclude-members: 
    :undoc-members:
 
 cmaputils.census.api\_key module
 --------------------------------
 
 .. automodule:: cmaputils.census.api_key
-   :members:
+w   :members:
    :show-inheritance:
    :undoc-members:
 

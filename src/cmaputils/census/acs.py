@@ -29,10 +29,10 @@ from cmaputils.census.geography import (
 )
 
 # SECTION: Constants
-BASE_CENSUS_URL = "https://api.census.gov/data"
+_BASE_CENSUS_URL = "https://api.census.gov/data"
 
 # -- list of all ACS products (for use in validating query parameters)
-VALID_ACS_PRODUCTS = [
+_VALID_ACS_PRODUCTS = [
     "acs1",
     "acs5",
     "acs",
@@ -45,21 +45,29 @@ VALID_ACS_PRODUCTS = [
 
 # -- years available for various ACS products (this way can easily be changed)
 # NOTE: AR: maintainer's note: change these if available years change
-ACS_1_AVAIL_YEARS = list(range(2005, 2025))
-ACS_5_AVAIL_YEARS = list(range(2005, 2025))
-ACS_1_SUPP_AVAIL_YEARS = list(range(2014, 2025))
-ACS_3_AVAIL_YEARS = list(range(2007, 2014))
-ACS_MIG_FLOWS_AVAIL_YEARS = list(range(2010, 2023))
-ACS_LANG_STAT_AVAIL_YEARS = list(range(2013, 2014))
-ACS_1_PUMS_AVAIL_YEARS = list(range(2005, 2020)) + list(
+_ACS_1_AVAIL_YEARS = list(range(2005, 2025))
+_ACS_5_AVAIL_YEARS = list(range(2005, 2025))
+_ACS_1_SUPP_AVAIL_YEARS = list(range(2014, 2025))
+_ACS_3_AVAIL_YEARS = list(range(2007, 2014))
+_ACS_MIG_FLOWS_AVAIL_YEARS = list(range(2010, 2023))
+_ACS_LANG_STAT_AVAIL_YEARS = list(range(2013, 2014))
+_ACS_1_PUMS_AVAIL_YEARS = list(range(2005, 2020)) + list(
     range(2021, 2025)
 )  # gap because of COVID
-ACS_5_PUMS_AVAIL_YEARS = list(range(2009, 2025))
+_ACS_5_PUMS_AVAIL_YEARS = list(range(2009, 2025))
 
 
 # NOTE: this enum makes it easy to form the query url based on
 # the product requested by user (functionally an endpoint selector)
 class ACSProduct(StrEnum):
+    """
+    Enum representing different ACS products, e.g., ACS 1 year.
+
+    Usage
+    -----
+    I
+    """
+
     ACS1 = "acs1"
     ACS5 = "acs5"
     ACS3 = "acs3"
@@ -73,14 +81,14 @@ class ACSProduct(StrEnum):
 
 # available years by ACSProduct
 _ACS_PRODUCT_AVAIL = {
-    ACSProduct.ACS1: ACS_1_AVAIL_YEARS,
-    ACSProduct.ACS5: ACS_5_AVAIL_YEARS,
-    ACSProduct.ACS3: ACS_3_AVAIL_YEARS,
-    ACSProduct.MIGRATION_FLOWS: ACS_MIG_FLOWS_AVAIL_YEARS,
-    ACSProduct.PUMS1: ACS_1_PUMS_AVAIL_YEARS,
-    ACSProduct.ACS5: ACS_5_PUMS_AVAIL_YEARS,
-    ACSProduct.PUMS1PR: ACS_1_PUMS_AVAIL_YEARS,
-    ACSProduct.PUMS5PR: ACS_5_PUMS_AVAIL_YEARS,
+    ACSProduct.ACS1: _ACS_1_AVAIL_YEARS,
+    ACSProduct.ACS5: _ACS_5_AVAIL_YEARS,
+    ACSProduct.ACS3: _ACS_3_AVAIL_YEARS,
+    ACSProduct.MIGRATION_FLOWS: _ACS_MIG_FLOWS_AVAIL_YEARS,
+    ACSProduct.PUMS1: _ACS_1_PUMS_AVAIL_YEARS,
+    ACSProduct.ACS5: _ACS_5_PUMS_AVAIL_YEARS,
+    ACSProduct.PUMS1PR: _ACS_1_PUMS_AVAIL_YEARS,
+    ACSProduct.PUMS5PR: _ACS_5_PUMS_AVAIL_YEARS,
 }
 
 
@@ -152,6 +160,8 @@ class ACSClient:
         """
         Helper function: appends API key param to list of tuples for ACS query
             (if necessary)
+
+        :meta private:
         """
 
         _params = params
@@ -164,13 +174,57 @@ class ACSClient:
     def get_data(
         self,
         *,
-        get: str,
+        get: str | list[str],
         year: int,
         product: ACSProduct,
         geography: CensusGeography,
-        output_path: str = None,
+        output_path: str | Path = None,
         keep_annotation_fields: bool = False,
-    ):
+    ) -> pd.DataFrame:
+        """
+        Method to get ACS data from the Census' API.
+
+        Parameters
+        -----
+        get : str | list[str]
+            The group/variable to get data for. E.g. B303100 or A101101_e1
+        year : int
+            The dataset year to get data for.
+        product : ACSProduct
+            The product to get the specified dataset for. Must be of form
+            ACSProduct.ACS1, ACSProduct.ACS5, ACSProduct.PUMS5, etc.
+            (See `ACSProduct` documentation)
+        geography : CensusGeography
+            The geography to get data for. Should be constructed as a
+            `CensusGeography` object using `CensusGeography.tract()`,
+            `CensusGeography.county()`, etc.
+            (See `CensusGeography` documentation)
+        output_path : str | pathlib.Path, optional
+            A path where to returned data should be written to. Will
+            create a .csv at that path if provided. If not provided,
+            returned data will not be written to disk.
+        keep_annotation_fields : bool = False,
+            By default, this method will discard the data annotation
+            fields returned by the API (e.g. 'B303100_01EA').
+            Pass `keep_annotation_fields=True` if you would like
+            to keep these fields in the returned DataFrame
+
+        Examples
+        -----
+        To get table S1501 for year 2024 from the ACS 5-year dataset
+            for Cook County IL:
+
+        >>> example_client = ACSClient()
+            example_data = example_client.get_data(
+                get="S1501",
+                year=2024,
+                product=ACSProduct.ACS5,
+                geography=CensusGeography.county(county="031", state="17")
+            )
+
+
+        """
+
         # TODO: ADD Documentatoin
         # get validation
         _table_regex_patterns = [re.compile(pat) for pat in _ACS_TABLE_REGEXES]
@@ -194,7 +248,7 @@ class ACSClient:
         if not isinstance(product, ACSProduct):
             raise AcsQueryException(
                 f"The product you provided is not a valid ACS product. "
-                f"Please select one of the following: {VALID_ACS_PRODUCTS}"
+                f"Please select one of the following: {_VALID_ACS_PRODUCTS}"
             )
 
         # check that year provided for query actually matches the available years
@@ -218,7 +272,7 @@ class ACSClient:
 
         # -- Building query url
         query_url = (
-            f"{BASE_CENSUS_URL}/{year}/acs/{_product_flag}/{_endpoint_flag}"
+            f"{_BASE_CENSUS_URL}/{year}/acs/{_product_flag}/{_endpoint_flag}"
         )
 
         # -- Building query params
