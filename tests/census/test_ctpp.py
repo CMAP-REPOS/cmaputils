@@ -10,35 +10,39 @@ Input Files: N/A
 Output Files: N/A
 """
 
-# - External dependencies
+# SECTION: External dependencies
 import pytest
 import dotenv
 import os
 import json
 import pandas as pd
+from pathlib import Path
 
-# - Internal dependencies
+# SECTION: Internal dependencies
 from cmaputils.census.ctpp import CTPPClient, CTPPGeography
 
-# - Constants
-SAMPLE_OUTPUT_DIR = os.path.join("tests", "census", "outputs")
+# SECTION: Constants
+CMAPUTILS_PATH = Path(__file__).parent.parent.parent  # cmaputils root
+SAMPLE_OUTPUT_DIR = os.path.join(CMAPUTILS_PATH, "tests", "census", "outputs")
 SAMPLE_OUTPUT_PATH = os.path.join(SAMPLE_OUTPUT_DIR, "ctpp.json")
 HOME_DIR = os.path.expanduser("~")
-AARONS_ENV_FILE_PATH = os.path.join(HOME_DIR, "api_keys.env")
-GENERIC_TEST_CLIENT = CTPPClient(env_path=AARONS_ENV_FILE_PATH)
-INPUTS_DIR = os.path.join("tests", "census", "inputs", "ctpp")
+CONTRIBUTOR_ENV_PATH = os.path.join(
+    CMAPUTILS_PATH, "contributors", "api_keys.env"
+)
+GENERIC_TEST_CLIENT = CTPPClient(env_path=CONTRIBUTOR_ENV_PATH)
+INPUTS_DIR = os.path.join(CMAPUTILS_PATH, "tests", "census", "inputs", "ctpp")
 
 # - Setup
 os.makedirs(SAMPLE_OUTPUT_DIR, exist_ok=True)
 
 
-# - Tests
+# SECTION: Tests
 def test_client_initialization():
     # NOTE: in order for test to pass, you should have
     # CTPP_API_KEY env var set (or ~\api_keys.env file)
-    if os.path.exists(AARONS_ENV_FILE_PATH):
-        print(f"Found .env file at {AARONS_ENV_FILE_PATH}")
-        dotenv.load_dotenv(AARONS_ENV_FILE_PATH)
+    if os.path.exists(CONTRIBUTOR_ENV_PATH):
+        print(f"Found .env file at {CONTRIBUTOR_ENV_PATH}")
+        dotenv.load_dotenv(CONTRIBUTOR_ENV_PATH)
     _api_key = os.getenv("CTPP_API_KEY")
 
     # should automatically find CTPP key as env var
