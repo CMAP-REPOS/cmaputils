@@ -9,6 +9,48 @@ This page contains examples for some of the tools in :mod:`cmaputils`.
 Census
 ******
 
+ACS
+===
+
+Importing
+---------
+
+.. code:: python
+
+   from cmaputils import ACSClient, CensusGeography, ACSProduct
+
+ACSClient construction
+----------------------
+
+.. code:: python 
+
+   # to construct with explicit API key
+   EXAMPLE_KEY = "abcdefghijklmnopqrstuvwxyzabcdefghijklmn"
+   example_client = ACSClient(api_key=EXAMPLE_KEY)
+   
+   # to construct with .env file
+   EXAMPLE_PATH = "~/api_keys.env"
+   example_client = ACSClient(env_path=EXAMPLE_PATH)
+
+   # to construct with a 'API_KEY' or 'CENSUS_API_KEY' env var
+   example_client = ACSClient()
+
+Getting ACS data
+------------
+
+.. code:: python
+
+   # to get table 'S1501' for year 2024 for Cook County, IL from the ACS
+   # 5-year dataset.
+   example_client = ACSClient()
+   example_data = example_client.get_data(
+        get="S1501",
+        year=2024,
+        product=ACSProduct.ACS5,
+        geography=CensusGeography.county(county="031", state="17"),
+   )
+
+
 CTPP
 ====
 
@@ -39,8 +81,8 @@ County Flows
    example_data = example_client.get_data(
         year=2021,
         get="B117200",
-        origin=CTPPGeography.county(county="031", state="17"),
-        destination=CTPPGeography.county(county="089", state="18"),
+        origin=CensusGeography.county(county="031", state="17"),
+        destination=CensusGeography.county(county="089", state="18"),
     )
    
    # to get variables 'a101101_e1' and 'a101101_e2' from 2016 for workers
@@ -48,8 +90,8 @@ County Flows
    example_data_2 = example_client.get_data(
         year=2016,
         get=["a101101_e1", "a101101_e2"],
-        origin=CTPPGeography.county(state="17"),
-        destination=CTPPGeography.county(state="18"),
+        origin=CensusGeography.county(state="17"),
+        destination=CensusGeography.county(state="18"),
     )
 
 Tract Flows
@@ -63,8 +105,8 @@ Tract Flows
    example_data = example_client.get_data(
         year=2021,
         get="B303100",
-        origin=CTPPGeography.tract(county="031", state="17"),
-        destination=CTPPGeography.tract(county="089", state="17"),
+        origin=CensusGeography.tract(county="031", state="17"),
+        destination=CensusGeography.tract(county="089", state="17"),
     )
    
    # to get table 'B303100' from 2021 for workers going from
@@ -74,9 +116,7 @@ Tract Flows
    example_data = example_client.get_data(
         year=2021,
         get="B303100",
-        origin=CTPPGeography.tract(tract="1001", county="031", state="17"),
-        destination=CTPPGeography.tract(tract="1001", county="089", state="17"),
+        origin=CensusGeography.tract(tract="1001", county="031", state="17"),
+        destination=CensusGeography.tract(tract="1001", county="089", state="17"),
     )
    
-
-

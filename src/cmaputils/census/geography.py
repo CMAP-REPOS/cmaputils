@@ -188,7 +188,7 @@ def _census_geography_to_params(
     geography: CensusGeography, origin_or_destination: str
 ) -> list[tuple[str, str]]:
     """
-    Helper function: turns CTPPGeography object into params dict.
+    Helper function: turns CensusGeography object into params dict.
     `origin_or_destination` must be either 'origin' or 'destination'
     """
     _for_key = ""

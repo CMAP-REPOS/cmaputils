@@ -12,6 +12,7 @@ Input Files: N/A
 Output Files: N/A
 """
 
+
 # SECTION: External dependencies
 import json
 from pathlib import Path
@@ -24,6 +25,8 @@ import re
 
 # SECTION: Internal dependencies
 from cmaputils.census.api_key import load_api_key_ctpp, ApiKeyException
+from cmaputils.census.geography import CensusGeography
+
 
 # SECTION: Constants
 _CTPP_BASE_URL = "https://ctppdata.transportation.org/api"
@@ -150,88 +153,6 @@ class SummaryLevel(StrEnum):
                     f" Must be one of: {_summary_level_mapping.keys()}"
                 )
             return _cleaned_value
-
-
-@dataclass(frozen=True)  # immutable after construction
-class CTPPGeography:
-    """
-    Geography class used to build CTPP queries (see CTPP.get_data for examples)
-
-    Examples
-    -----
-    >>> CTPPGeography.state(fips="17") # get Illinois CTPPGeography object
-
-    >>> CTPPGeography.county(state="17", county="031") # get Cook County CTPPGeography object
-
-    """
-
-    level: SummaryLevel = field(default=SummaryLevel.COUNTY)
-    fips: str | int | list[int] = field(default="*")
-    within: dict[SummaryLevel, str | int | list[int]] = field(
-        default_factory={SummaryLevel.STATE: "17"}
-    )
-
-    @classmethod
-    def state(cls, fips: str | list[str]) -> CTPPGeography:
-        # TODO: ADD documentation
-        return CTPPGeography(level=SummaryLevel.STATE, fips=_format_fips(fips))
-
-    @classmethod
-    def county(
-        cls,
-        county: str | list[str] = "*",
-        *,
-        state: str | list[str],
-    ) -> CTPPGeography:
-        # TODO: ADD Documentation
-        return CTPPGeography(
-            level=SummaryLevel.COUNTY,
-            fips=_format_fips(county),
-            within={SummaryLevel.STATE: _format_fips(state)},
-        )
-
-    @classmethod
-    def tract(
-        cls,
-        tract: str | list[str] = "*",
-        *,
-        county: str | list[str] = "*",
-        state: str | list[str],
-    ):
-        # TODO: ADD documentation
-        return CTPPGeography(
-            level=SummaryLevel.TRACT,
-            fips=_format_fips(tract),
-            within={
-                SummaryLevel.STATE: _format_fips(state),
-                SummaryLevel.COUNTY: _format_fips(county),
-            },
-        )
-
-    @classmethod
-    def taz(args):
-        pass
-
-    @classmethod
-    def place(
-        cls, place: str | list[str], state: str | list[str]
-    ) -> CTPPGeography:
-        # TODO: ADD documentation
-        return CTPPGeography(
-            level=SummaryLevel.PLACE,
-            fips=_format_fips(place),
-            within={SummaryLevel.STATE: _format_fips(state)},
-        )
-
-    def cmap_counties():
-        """
-        Creates a `CTPPGeography` object for the 7 CMAP counties
-        """
-        return CTPPGeography(
-            level=SummaryLevel.COUNTY,
-            fips=_format_fips(_CMAP_COUNTY_CODES),
-            within={SummaryLevel.STATE: _format_fips("17")},
-        )
 
 
 class CTPPClient:
@@ -457,8 +378,8 @@ class CTPPClient:
         self,
         year: int,
         get: str | list[str],
-        origin: CTPPGeography | None = None,
-        destination: CTPPGeography | None = None,
+        origin: CensusGeography | None = None,
+        destination: CensusGeography | None = None,
         component: str | None = None,
         bbox: str | list[float] | None = None,
         response_format: str | None = None,
@@ -476,14 +397,14 @@ class CTPPClient:
             The dataset year to get data from. Must be one of [2000 | 2010 | 2016 | 2021]
         get : str | list[str]
             The group/variable to get data for. E.g. B303100 or A101101_e1
-        origin : CTPPGeography, optional
+        origin : CensusGeography, optional
             The origin geography to get data for flows. Should be constructed
-            as a `CTPPGeography` object using `CTPPGeography.tract()`,
-            `CTPPGeography.county()`, etc.
-        destination : CTPPGeography, optional
+            as a `CensusGeography` object using `CensusGeography.tract()`,
+            `CensusGeography.county()`, etc.
+        destination : CensusGeography, optional
             The destination geography to get data for flows. Should be
-            constructed as a `CTPPGeography` object using
-            `CTPPGeography.tract()`, `CTPPGeography.county()`, etc.
+            constructed as a `CensusGeography` object using
+            `CensusGeography.tract()`, `CensusGeography.county()`, etc.
 
         Returns
         -----
@@ -505,11 +426,11 @@ class CTPPClient:
                 " valid CTPP table/group/variables names."
             )
 
-        if not isinstance(origin, CTPPGeography) and origin is not None:
+        if not isinstance(origin, CensusGeography) and origin is not None:
             raise TypeError(
-                "'origin' parameter must be of type CTPPGeography!"
-                " See method documentation or docs for CTPPGeography for"
-                " information on constructing/using the CTPPGeography class"
+                "'origin' parameter must be of type CensusGeography!"
+                " See method documentation or docs for CensusGeography for"
+                " information on constructing/using the CensusGeography class"
             )
 
         # NOTE: (over) nesting makes more readable here
@@ -586,14 +507,14 @@ class CTPPClient:
 
         query_params.append(("get", _get_value))
 
-        if isinstance(origin, CTPPGeography):
+        if isinstance(origin, CensusGeography):
             query_params.extend(_ctppgeography_to_params(origin, "origin"))
         elif origin is not None:
             raise TypeError(
                 # TODO:
             )
 
-        if isinstance(destination, CTPPGeography):
+        if isinstance(destination, CensusGeography):
             query_params.extend(
                 _ctppgeography_to_params(destination, "destination")
             )
@@ -847,7 +768,7 @@ def _group_metadata_param_builder(
     return _sanitize_params(_params)
 
 
-# -- CTPPGeography helpers
+# -- CensusGeography helpers
 
 
 def _format_fips(fips: str | list[str]) -> str:
@@ -867,10 +788,10 @@ def _format_fips(fips: str | list[str]) -> str:
 
 
 def _ctppgeography_to_params(
-    geography: CTPPGeography, origin_or_destination: str
+    geography: CensusGeography, origin_or_destination: str
 ) -> list[tuple[str, str]]:
     """
-    Helper function: turns CTPPGeography object into params dict.
+    Helper function: turns CensusGeography object into params dict.
     `origin_or_destination` must be either 'origin' or 'destination'
 
     :meta private:

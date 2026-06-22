@@ -19,7 +19,8 @@ import pandas as pd
 from pathlib import Path
 
 # SECTION: Internal dependencies
-from cmaputils.census.ctpp import CTPPClient, CTPPGeography
+from cmaputils.census.ctpp import CTPPClient
+from cmaputils.census.geography import CensusGeography
 
 # SECTION: Constants
 CMAPUTILS_PATH = Path(__file__).parent.parent.parent  # cmaputils root
@@ -95,8 +96,8 @@ def test_ctpp_get_data_cookIL_lakeIN():
     test_result = GENERIC_TEST_CLIENT.get_data(
         year=2021,
         get="B117200",
-        origin=CTPPGeography.county(county="031", state="17"),
-        destination=CTPPGeography.county(county="089", state="18"),
+        origin=CensusGeography.county(county="031", state="17"),
+        destination=CensusGeography.county(county="089", state="18"),
     )
     assert test_result == known_good_data
 
@@ -108,8 +109,8 @@ def test_ctpp_get_data_lakeIL_kaneIL():
     test_result = GENERIC_TEST_CLIENT.get_data(
         year=2016,
         get=["a101101_e1", "a101101_e2"],
-        origin=CTPPGeography.county(county="097", state="17"),
-        destination=CTPPGeography.county(county="089", state="17"),
+        origin=CensusGeography.county(county="097", state="17"),
+        destination=CensusGeography.county(county="089", state="17"),
     )
     assert test_result == known_good_data
 
@@ -121,8 +122,8 @@ def test_ctpp_get_data_cookILTract1001_cookILTract1002():
     test_result = GENERIC_TEST_CLIENT.get_data(
         year=2021,
         get=["B303100_e1"],
-        origin=CTPPGeography.tract(tract="*", county="031", state="17"),
-        destination=CTPPGeography.tract(tract="*", county="097", state="17"),
+        origin=CensusGeography.tract(tract="*", county="031", state="17"),
+        destination=CensusGeography.tract(tract="*", county="097", state="17"),
     )
     print(test_result)
     assert test_result == known_good_data
@@ -135,8 +136,8 @@ def test_ctpp_get_data_cmap_counties():
     test_result = GENERIC_TEST_CLIENT.get_data(
         year=2021,
         get=["B303100_e1"],
-        origin=CTPPGeography.cmap_counties(),
-        destination=CTPPGeography.cmap_counties(),
+        origin=CensusGeography.cmap_counties(),
+        destination=CensusGeography.cmap_counties(),
     )
     assert test_result == known_good_data
 
@@ -148,8 +149,8 @@ def test_ctpp_get_data_geojson():
     test_result = GENERIC_TEST_CLIENT.get_data(
         year=2021,
         get=["B303100_e1"],
-        origin=CTPPGeography.cmap_counties(),
-        destination=CTPPGeography.cmap_counties(),
+        origin=CensusGeography.cmap_counties(),
+        destination=CensusGeography.cmap_counties(),
         response_format="geojson",
     )
     assert test_result == known_good_data
