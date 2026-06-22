@@ -54,7 +54,7 @@ complete. If you encounter any problems with documentation, or have any question
 `arumph@cmap.illinois.gov <mailto:arumph@cmap.illinois.gov>`_*
 
 Auto-Generated Docs
-===================
+*******************
 
 *Warning: these docs are partially 
 automatically generated from docstrings in the* ``cmaputils`` *code.

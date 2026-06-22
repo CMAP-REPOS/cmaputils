@@ -9,15 +9,16 @@ repository, and then installing it to a python environment with pip/uv.
 This will require you to open your terminal and run a few commands.
 
 Requirements:
-=============
+*************
 
 * Git (or gh, the GitHub CLI)
 * Python
 * uv, Conda, Mamba, or Pip
 * Access to the CMAP-REPOS GitHub organization
 
-Setup and Organization:
-=======================
+Setup and organization:
+***********************
+
 First things first, you will need to download the source code for the cmaputils package.
 If you do not already have one, I recommend creating a folder/directory where you can put other people's
 repositories/code. The recommended location to create yours is at C:\Users\YOUR_NAME\Repos (or ~/Repos for Linux),
@@ -51,8 +52,8 @@ You can then change directories into the newly created ``cmaputils`` directory w
 
    $ cd cmaputils
 
-Install to Python Environment:
-==============================
+Install to Python environment
+******************************
 
 Now that you've cloned the repository, you can install it into the Python environment of your choosing. You should use
 ``pip`` or ``uv`` to do this. If you normally use Conda or Mamba to manage Python environments see :ref:`conda-instructions`.
@@ -90,8 +91,9 @@ Or if you're using uv:
 
 .. _conda-instructions:
 
-Conda/Mamba Instructions:
-^^^^^^^^^^^^^^^^^^^^^^^^^
+Conda/Mamba instructions
+========================
+
 In order to install the package with Conda or Mamba, you will need to install ``pip`` in your Conda/Mamba environment.
 Mamba and Conda are interchangable for these purposes, so if you are using Mamba, simply replace 
 ``conda`` with ``mamba`` in all subsequent commands. First, activate your environment with:

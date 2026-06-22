@@ -11,7 +11,7 @@ cmaputils documentation
 
 
 Table of Contents
-=================
+*****************
 
 See below for table of contents for the documentation, including documentation for
 ``cmaputils`` components such as methods, functions, classes, and modules.
@@ -26,9 +26,10 @@ See below for table of contents for the documentation, including documentation f
    modules
    future-plans
    contributing
+   style-guide
 
 Indices and tables
-==================
+******************
 
 * :ref:`genindex`
 * :ref:`modindex`

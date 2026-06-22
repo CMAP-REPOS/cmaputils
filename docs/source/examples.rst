@@ -7,13 +7,13 @@ Examples
 This page contains examples for some of the tools in :mod:`cmaputils`.
 
 Census
-======
+******
 
 CTPP
-----
+====
 
-CTPPClient Construction
-^^^^^^^^^^^^^^^^^^^^^^^
+CTPPClient construction
+-----------------------
 
 .. code:: python
 
@@ -29,7 +29,7 @@ CTPPClient Construction
    example_client = CTPPClient()
 
 County Flows
-^^^^^^^^^^^^
+------------
 
 .. code:: python
 
@@ -53,7 +53,7 @@ County Flows
     )
 
 Tract Flows
-^^^^^^^^^^^
+-----------
 
 .. code:: python
 
@@ -76,7 +76,6 @@ Tract Flows
         get="B303100",
         origin=CTPPGeography.tract(tract="1001", county="031", state="17"),
         destination=CTPPGeography.tract(tract="1001", county="089", state="17"),
-
     )
    
 

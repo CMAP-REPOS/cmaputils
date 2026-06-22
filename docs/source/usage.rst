@@ -7,10 +7,10 @@ Usage
 This page contains detailed instructions for usage of the various features of ``cmaputils``
 
 Census
-======
+******
 
 CTPP
-----
+====
 
 The best way to use the :mod:`cmaputils` CTPP module is to import the package,
 or the Classes you need, into your Python script. First, make sure you have 
@@ -32,8 +32,8 @@ working with CTPP queries:
 Now you can query the CTPP! 
 
 
-Creating a CTPPClient Object
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Creating a CTPPClient object
+----------------------------
 
 Before talking about function signatures and technical, here's a brief overview
 of how using :mod:`cmaputils` CTPP tools works. First, you will need to create
