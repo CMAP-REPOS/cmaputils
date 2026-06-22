@@ -9,6 +9,26 @@ This page contains detailed instructions for usage of the various features of ``
 Census
 ******
 
+FIPS
+====
+
+You can use ``cmaputils`` to get all the FIPS codes for any state in the US (and DC + PR).
+You can do so by importing the FIPS code you want from :mod:`cmaputils.fips` with the following:
+
+.. code:: python 
+
+   # for Cook County, IL and Illinois' FIPS codes
+   from cmaputils.fips import COOK_COUNTY_IL, ILLINOIS_FIPS
+
+   # for all FIPS codes (WARNING: LITERALLY THOUSANDS OF FIPS CODES)
+   from cmaputils.fips import *
+
+   # for county X in state Y (Where Y is that state's abbreviation)
+   from cmaputils.fips import X_COUNTY_Y
+
+   # for state Z (Where Y is the unabbreviated state name)
+   from cmaputils.fips import Z_FIPS
+
 ACS
 ===
 
