@@ -26,7 +26,7 @@ You can do so by importing the FIPS code you want from :mod:`cmaputils.fips` wit
    # for county X in state Y (Where Y is that state's abbreviation)
    from cmaputils.fips import X_COUNTY_Y
 
-   # for state Z (Where Y is the unabbreviated state name)
+   # for state Z (Where Z is the unabbreviated state name)
    from cmaputils.fips import Z_FIPS
 
 ACS
@@ -43,7 +43,7 @@ You can then import the package using the following at the top of your Python fi
    import cmaputils
 
 Or, you can use the following to just get the necessary classes for
-working with CTPP queries:
+working with ACS queries:
 
 .. code:: python
 
@@ -59,10 +59,10 @@ Before talking about function signatures and technical details, here's a brief o
 of how using :mod:`cmaputils` ACS tools works. First, you will need to create
 a :class:`.ACSClient` object. When constructing this :class:`.ACSClient` object, you will have the option
 to explicitly provide a Census API key or a path (relative or absolute) to a ``.env`` file containing a 
-CTPP API key. If neither of these options is provided, the constructor will automatically look for
-a CTPP API key in your environment variables. 
+Census key. If neither of these options is provided, the constructor will automatically look for
+a Census API key in your environment variables. 
 
-**IMPORTANT**: A CENSUS API Key is required! If you are providing a path to a ``.env`` file or 
+**IMPORTANT**: A Census API Key is required! If you are providing a path to a ``.env`` file or 
 not providing any constructor arguments, please ensure your CTPP API key environment variable is 
 named either: ``CENSUS_API_KEY`` **or** ``API_KEY``.
 
@@ -84,8 +84,8 @@ Query ACS Using Client
 ^^^^^^^^^^^^^^^^^^^^^^
 
 Now that you have a :class:`.CTPPClient` object, you can use the class' methods to query the CTPP API.
-You can find a list of methods in the docstrings for the :class:`.CTPPClient` class, which you can easily
-view by hovering over :class:`.CTPPClient` in your editor.
+You can find a list of methods in the docstrings for the :class:`.ACSClient` class, which you can easily
+view by hovering over :class:`.ACSClient` in your editor.
 
 **Supported ACSClient Methods Include**:
 * get_data()
@@ -95,7 +95,7 @@ get_data()
 
 To get ACS data, you can use the :meth:`.ACSClient.get_data`
 method. The :meth:`.ACSClient.get_data` requires four arguments, and will throw an execption
-if either is not provided: *year*, *get*, *product*, and *geography*.
+if the following are not provided: *year*, *get*, *product*, and *geography*.
 
 You can get data using the following convention:
 
