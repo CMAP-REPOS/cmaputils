@@ -24,7 +24,7 @@ rules but the trivial/superficial stuff in brief:
 * Use blank lines to seperate between different 'sentences' 
   (i.e., if a few lines of code are part of the 'same thought', 
   they can go together. Otherwise, put a blank line in between
-   to show that they are different parts/steps in your code).
+  to show that they are different parts/steps in your code).
 * Use lower case snake case for functions and variables, and Pascal
   case for Classes.
 * Constants should be capitalized.
@@ -87,8 +87,8 @@ When writing a new module/file for `cmaputils` please make sure
 you include the following sections (all but the docstring and module info
 should be preceeded by '# SECTION: '):
 
-1. A docstring located at the top of the module, containing information
-  about the module. 
+1. A docstring located at the top of the module, containing information 
+    about the module. 
 2. Module info: a short multiline comment containing author, date updated,
     and other useful info (see source code in src/cmaputils/census/ctpp.py
     for example).
