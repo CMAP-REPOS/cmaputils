@@ -214,7 +214,7 @@ def get_county_fips():
         county_state_name.split(",")[1].strip()
         for county_state_name in _all_county_state_names
     ]
-    unique_state_names = list(set(_all_state_names))
+    unique_state_names = sorted(set(_all_state_names))
 
     # --- now writing FIPS code variables for each county
 
