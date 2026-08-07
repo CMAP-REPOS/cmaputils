@@ -23,7 +23,6 @@ CMAPUTILS_PATH=""
 find_census_api_key() {
     # Function to find adequate Census API key to install in correct place
     # for contributors
-    CENSUS_API_KEY=""
 
     # check env variables first
     possible_api_key_names=("CENSUS_API_KEY" "CENSUS_KEY" "API_KEY" "ACS_API_KEY" "ACS_KEY")
@@ -38,10 +37,17 @@ find_census_api_key() {
                 CENSUS_API_KEY="$env_var_value"
                 break
             fi
+
+            if [[ "$CENSUS_API_KEY" == "" ]]; then
+                echo "No valid Census API key found!"
+                return 1
+            fi
         fi
     done
+
     
     echo "$CENSUS_API_KEY"
+    return 0
     # TODO: Add .env search code?
 }
 
@@ -52,10 +58,10 @@ echo "Checking whether git is installed"
 git_installed=false
 
 if command -v git &>/dev/null; then
-    echo "Git installed!"
+    echo "git is installed"
     git_installed=true
 else
-    echo "ERROR: Git is not installed!"
+    echo "ERROR: git is not installed!"
     
     # Will ask user if would like to install git from script (using winget/powershell)
     read -p "Would you like to try to install Git from this script? (y/N): " try_git_install
@@ -92,7 +98,7 @@ EOF
         echo $'Git install failed. Please manually install git (preferably with Git Bash included) at: https://git-scm.com/install/windows\n'
         exit 1
     else 
-        echo "Git install succeeded!"
+        echo "Git installed succesfully!"
     fi
 fi   
 
@@ -101,10 +107,10 @@ echo "Checking whether python is installed"
 python_installed=false
 
 if command -v python &>/dev/null; then
-    echo "Python is properly installed!"
+    echo "python is installed"
     python_installed=true
 elif command -v python3 &>/dev/null; then
-    echo "Python is properly installed (as 'python3')"
+    echo "python is installed (as 'python3')"
     python_installed=true
 else
     echo "WARNING: Python is not installed!"
@@ -157,13 +163,13 @@ if ! command -v uv &>/dev/null; then
 
     # Check that uv install suceeded
     if command -v uv &>/dev/null; then
-        echo "uv install succeeded"
+        echo "uv installed succesfully!"
     else
         echo $'uv install failed. Please install manually\n'
         exit 1
     fi
 else
-    echo "uv is installed already!"
+    echo "uv is installed"
 fi
 
 # Check if cmaputils already cloned
@@ -228,7 +234,7 @@ uv_venv_activate_bat="$uv_venv_path/Scripts/activate.bat"
 uv_venv_activate_pwsh="$uv_venv_path/Scripts/activate.ps1"
 
 echo "Syncing dev environment using uv"
-if uv sync --all-groups; then
+if uv sync --all-groups &>/dev/null; then
     echo "Venv set up correctly at: $uv_venv_path"
     echo "You can activate that environment with the following:
         Bash: $uv_venv_activate_bash
@@ -265,16 +271,30 @@ if [[ $has_contributors_api_keys_file -eq 1 ]]; then
     echo "Found 'api_keys.env' in proper location at $CONTRIBUTOR_API_KEYS_PATH"
 else
     echo "You do not have an existing 'api_keys.env' in the proper location at $CONTRIBUTOR_API_KEYS_PATH"
+
     read -p "Would you like this script to search for API keys/env variables to try to fill it in automatically? \
-        None of your information will be saved or shared in any way (Y/n): " search_for_keys
+None of your information will be saved or shared in any way (Y/n): " search_for_keys
+
     if [[ "$search_for_keys" != "no" && "$search_for_keys" != "n" ]]; then
-        CENSUS_API_KEY=$(find_census_api_key)
-        echo "CENSUS_API_KEY=$CENSUS_API_KEY" > "$CONTRIBUTOR_API_KEYS_PATH"
+        if CENSUS_API_KEY=$(find_census_api_key); then
+            echo "Valid API key found!"
+            echo "CENSUS_API_KEY=$CENSUS_API_KEY" > "$CONTRIBUTOR_API_KEYS_PATH"
+            read -p "Would you like to preview your contributors/api_keys.env file? (y/N): " preview_api_keys
+            if [[ "$preview_api_keys" == "y" || "$preview_api_keys" == "yes" || "$preview_api_keys" == "Y" ]]; then
+                cat "$CONTRIBUTOR_API_KEYS_PATH"
+            fi
+        else
+
+            echo "Could not find a Valid API key, please manually create a api_keys.env file at $CONTRIBUTOR_API_KEYS_PATH \
+with CENSUS_API_KEY=your_api_key!"
+
+        fi
+
     else 
-        echo "Ok will not look for API keys, but please create file at $CONTRIBUTOR_API_KEYS_PATH with CENSUS_API_KEY=your_api_key !\n"
-        exit 1
+        echo "Ok will not look for API keys, but please create file at $CONTRIBUTOR_API_KEYS_PATH with CENSUS_API_KEY=your_api_key !"
     fi
 fi
+
 echo $'Development environment for cmaputils fully setup!\n'
 
 echo "Script succeeded (exit code 0)"
